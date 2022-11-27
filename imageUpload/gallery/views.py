@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Photo
+from django.http import HttpResponseForbidden
 
 # Create your views here.
 
@@ -28,7 +29,7 @@ class UploadView(LoginRequiredMixin, CreateView):
     def form_valid(self,form):
         form.instance.uploader = self.request.user
         
-        return super().form_vailid(form)
+        return super().form_valid(form)
     
 class IsUploader(UserPassesTestMixin):
     
@@ -39,6 +40,7 @@ class IsUploader(UserPassesTestMixin):
             return self.request.user == self.get_photo().uploader
         else:
             raise PermissionDenied("Dont Have Permissions")
+            # return HttpResponseForbidden()
         
 class PhotoDeleteView(IsUploader, DeleteView):
     template_name = 'gallery/delete.html'
