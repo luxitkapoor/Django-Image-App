@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Photo
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden,HttpResponseRedirect
 
 # Create your views here.
 
@@ -13,6 +13,12 @@ class PhotoListView(ListView):
     model = Photo
     template_name = 'gallery/list.html'
     context_object_name = 'photos'
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Photo.objects.filter(uploader =self.request.user )
+        else:
+            return []
+            
 
 class PhotoDetailView(DetailView):
     model = Photo
